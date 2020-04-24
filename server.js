@@ -29,7 +29,7 @@ var connection = mysql.createConnection({
         {
             type: 'rawlist',
             name: "Bidder",
-            message: "Select if you'd like to add an item or bid on an existing item.",
+            message: "Select what you'd like to do",
             choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee', 'Add Role', 'Update Employee', 'exit']
         }
     ]).then(answers => {
@@ -85,38 +85,187 @@ function viewRole() {
     mainMenu()
 }
 function addDepartment(){
-    console.log("Loading Add a Department\n");
-)
-    connection.query("INSERT INTO (title), ?, ?)", function(err, res) {
-      if (err) throw err;
-      // Log all results of the SELECT statement
-      artistSongs = []
-
-      
-      for(i=0; i<res.length; i++){
-        if(res[i].releaseYear <= yearTop && res[i].releaseYear >= yearBot){
-            artistSongs.push(res[i])
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'departmentName',
+            message: 'what is the name of this new Department?'
         }
-      }
-      console.table(artistSongs)
+    ]).then(async answers => {
+        console.log(answers)
+        console.log("Inserting a new Department...\n");
+        const newDepartment = answers.departmentName
+        var query = connection.query(
+          "INSERT INTO department SET ?",
+          {
+            name: newDepartment
+          },
+          function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            console.table(res)
+            mainMenu()
+          }
+        );
+        try {
+        } catch (e) {
+            console.log(e)
+        }
+    })
 
-      mainMenu()
-    });
+    
+ 
 }
 function addEmployee(){
-console.log("adding employee")
-// this will be a prompt followed by an INSERT
-mainMenu()
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: 'what is the first name of this new employee?'
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: "what is their last name?"
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: "what is their role ID?"
+        },
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'what is their manage id?'
+        }
+    ]).then(async answers => {
+        console.log(answers)
+        console.log("Inserting a new Employee...\n");
+        const first_Name = answers.firstName
+        const last_Name = answers.lastName
+        const role_ID = answers.role
+        const manager_ID = answers.manager
+
+        var query = connection.query(
+          "INSERT INTO employee SET ?",
+          {
+            first_name: first_Name,
+            last_name: last_Name,
+            role_id: role_ID,
+            manager_id: manager_ID
+
+          },
+          function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            console.table(res)
+            mainMenu()
+          }
+        );
+        try {
+        } catch (e) {
+            console.log(e)
+            mainMenu()
+        }
+    })
+
+    
+ 
 }
 function addRole(){
-console.log("adding Role")
-// this will be a prompt followed by an INSERT
-mainMenu()
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'what is the title of this role?'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: "what is the salary of this position"
+        },
+        {
+            type: 'input',
+            name: 'department_id',
+            message: "what is the department id?"
+        }
+    ]).then(async answers => {
+        console.log(answers)
+        console.log("Inserting a new role...\n");
+        const title_answer = answers.title
+        const salary_answer = answers.salary
+        const department_answer = answers.department_id
+
+        var query = connection.query(
+          "INSERT INTO role SET ?",
+          {
+            title: title_answer,
+            salary: salary_answer,
+            department_id: department_answer
+          },
+          function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " role inserted!\n");
+            // Call updateProduct AFTER the INSERT completes
+            console.table(res)
+            mainMenu()
+          }
+        );
+        try {
+        } catch (e) {
+            console.log(e)
+            mainMenu()
+        }
+    })
+
+
 }
+
+
+
 
 function updateEmployee(){
     console.log("Updating Employees")
-//  const query = 'UPDATE to_do_list SET ? WHERE ?;';
-    // this will be a prompt followed by an updating query then a response of the employees
-    mainMenu()
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first_Name',
+            message: 'what is the first name of the employee?'
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: "what is the id of their new role?"
+        }
+    ]).then(async answers => {
+        console.log(answers)
+        console.log("Inserting a new role...\n");
+        const firstName_answer = answers.first_Name
+        const role_answer = answers.role
+
+        var query = connection.query(
+          "UPDATE employee SET ? WHERE ?;",
+          [{
+            first_name: firstName_answer
+          },
+          {
+            role_id: role_answer
+          }],
+          function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " role updated!\n");
+            // Call updateProduct AFTER the INSERT completes
+            console.table(res)
+            mainMenu()
+          }
+        );
+        try {
+           
+        } catch (e) {
+            console.log(e)
+            mainMenu()
+        }
+    })
 }
